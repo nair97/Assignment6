@@ -28,7 +28,7 @@ def get_daily_mean_flow( dataDF ):
 
 def get_highest_flow( dataDF, Nvals ):
     # identify the Nval highest value, returns a new dataframe with Nvals rows
-    highest_flow = dataDF.sort_values(by = 'Discharge', ascending=True)[:Nvals]
+    highest_flow = dataDF.sort_values(by = 'Discharge', ascending=False)[:Nvals]
     return highest_flow
     
 def get_monthly_mean_flow( dataDF ):
@@ -38,32 +38,32 @@ def get_monthly_mean_flow( dataDF ):
 
 def plot_streamflow( dataDF ):
     # create plots of the time series data
-    daily_flow = get_daily_mean_flow(dataDF.resample('D').mean())
+    daily_flow = get_daily_mean_flow(dataDF)
     daily_flow.plot(figsize=(10,5),style='g--')
     plt.title('Wabash river discharge daily mean flow')
     plt.xlabel('Discharge-cubic ft/sec')
     plt.ylabel('Date')
-    plt.legend(['Daily mean flow'],loc = 'upperright',edgecolor = 'b')
+    plt.legend(['Daily mean flow'],loc = 'upper right')
     plt.savefig('Wabash river discharge daily average flow.pdf')
     plt.show()
     plt.close()
     
-    highest_flow = get_highest_flow(dataDF.sort_index(ascending=True))
-    highest_flow.plot(figsize=(10,5),style='bo')
+    highest_flow = get_highest_flow(dataDF)
+    highest_flow.plot(figsize=(10,5),style='b--')
     plt.title('Wabash river discharge top 10 highest daily average flow')
     plt.xlabel('Date')
     plt.ylabel('Discharge-cubic ft/sec')
-    plt.legend(['Highest flow'],loc = 'upperright',edgecolor = 'b')
+    plt.legend(['Highest flow'],loc = 'upper right')
     plt.savefig('Wabash river discharge top 10 highest average streamflow.pdf')
     plt.show()
     plt.close()
     
-    monthly_flow = get_monthly_mean_flow(dataDF.resample('M').mean())
+    monthly_flow = get_monthly_mean_flow(dataDF)
     monthly_flow.plot(figsize=(10,5),style='r+')
     plt.title('Wabash river discharge monthly average flow')
     plt.xlabel('Date')
     plt.ylabel('Discharge-cubic ft/sec')
-    plt.legend(['Monthly avg flow'],loc = 'upperright',edgecolor = 'k')
+    plt.legend(['Monthly avg flow'],loc = 'upper right')
     plt.savefig('Wabash river discharge monthly average streamflow.pdf')
     plt.show()
     plt.close()
