@@ -22,13 +22,13 @@ def get_daily_mean_flow( dataDF ):
     # calculate daily mean value, returns a new dataframe
     dates = pd.date_range(start='2015-03-17', periods=dataDF.shape[0],freq='15min')
     
-    daily_flow = Series(dataDF['Discharge'].values, index = dates, columns = ['Discharge']).resample('D').mean() 
+    daily_flow = Series(dataDF['Discharge'].values, index = dates).resample('D').mean() 
     
     return daily_flow
 
 def get_highest_flow( dataDF, Nvals ):
     # identify the Nval highest value, returns a new dataframe with Nvals rows
-    highest_flow = dataDF.sort_values(by = 'Discharge', ascending=False)[:Nvals]
+    highest_flow = dataDF.sort_values(by = 'Discharge', ascending=True)[:Nvals]
     return highest_flow
     
 def get_monthly_mean_flow( dataDF ):
@@ -48,7 +48,7 @@ def plot_streamflow( dataDF ):
     plt.show()
     plt.close()
     
-    highest_flow = get_highest_flow(dataDF.sort_index(ascending=False))
+    highest_flow = get_highest_flow(dataDF.sort_index(ascending=True))
     highest_flow.plot(figsize=(10,5),style='bo')
     plt.title('Wabash river discharge top 10 highest daily average flow')
     plt.xlabel('Date')
