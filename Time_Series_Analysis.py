@@ -44,7 +44,7 @@ def plot_streamflow( dataDF ):
     
     # plot for daily average streamflow
     daily_flow = get_daily_mean_flow(dataDF)
-    daily_flow.plot(figsize=(7,4),style='g--')# plotting figure size and display style
+    daily_flow.plot(figsize=(7,3),style='g--')# plotting figure size and display style
     plt.xlabel('Date', fontsize=10)# naming x-axis
     plt.ylabel('Discharge-cubic ft/sec', fontsize=10)# naming y-axis
     plt.title("Wabash river discharge daily mean flow", fontsize=12)# naming the title
