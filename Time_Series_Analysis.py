@@ -1,72 +1,89 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Sep 18 22:47:35 2020
+Created on Wed Oct 14 16:03:52 2020
 
 @author: meerarakesh09
 """
 
+# computing the daily mean flow, highest flow and monthly flow of Wabash river discharge
 # import required modules
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from pandas import Series, DataFrame, Panel
 
-# user defined functions
 def read_data( inFileName ):
     # open the data file and read contents, retuns a dataframe
-    dataDF = pd.read_table(inFileName, header=None,delimiter='\t', skiprows=26,usecols=[2,4], names=['Datetime','Discharge'])
-    return dataDF
+    dataDF = pd.read_table(inFileName, header=None, delimiter='\t', 
+                           skiprows=26,usecols=[2,4], 
+                           names=["datetime","Discharge"]
+                           )
+    #setting the index column to datetime 
+    dataDF['datetime']= pd.to_datetime(dataDF['datetime'])
+    #return the dataframe
+    return dataDF.set_index('datetime')
 
 def get_daily_mean_flow( dataDF ):
     # calculate daily mean value, returns a new dataframe
-    dates = pd.date_range(start='2015-03-17', periods=dataDF.shape[0],freq='15min')
     
-    daily_flow = Series(dataDF['Discharge'].values, index = dates).resample('D').mean() 
-    
-    return daily_flow
+    return dataDF.resample('D').mean()
 
-def get_highest_flow( dataDF, Nvals ):
+  
+def get_highest_flow( dataDF, Nvals):
     # identify the Nval highest value, returns a new dataframe with Nvals rows
-    highest_flow = dataDF.sort_values(by = 'Discharge', ascending=False)[:Nvals]
-    return highest_flow
-    
+    return dataDF.nlargest(Nvals, columns=['Discharge'],keep='all').rename(columns={'Discharge':'Highest Flow'})
+     
 def get_monthly_mean_flow( dataDF ):
     # calculate monthly mean value, returns a new dataframe
-    monthly_flow = dataDF.resample('M').mean()
-    return monthly_flow
+    
+    return dataDF.resample('M').mean()
 
 def plot_streamflow( dataDF ):
     # create plots of the time series data
+    
+    # plot for daily average streamflow
     daily_flow = get_daily_mean_flow(dataDF)
-    daily_flow.plot(figsize=(10,5),style='g--')
-    plt.title('Wabash river discharge daily mean flow')
-    plt.xlabel('Discharge-cubic ft/sec')
-    plt.ylabel('Date')
-    plt.legend(['Daily mean flow'],loc = 'upper right')
-    plt.savefig('Wabash river discharge daily average flow.pdf')
+    daily_flow.plot(figsize=(7,4),style='g--')# plotting figure size and display style
+    plt.xlabel('Date', fontsize=10)# naming x-axis
+    plt.ylabel('Discharge-cubic ft/sec', fontsize=10)# naming y-axis
+    plt.title("Wabash river discharge daily mean flow", fontsize=12)# naming the title
+    plt.savefig('WR daily average streamflow.pdf')# save the plot
+    
+    #plot for top 10 highest avearge streamflow
+    highest_flow = get_highest_flow(daily_flow,10)
+    highest_flow.plot(figsize=(7,4), style = 'b*')# plotting figure size and display style
+    plt.xlabel('Date', fontsize=10)# naming x-axis
+    plt.ylabel('Discharge-cubic ft/sec', fontsize=10)# naming y-axis
+    plt.title("Wabash river discharge top 10 highest daily average flow", fontsize=12)# naming the title
+    plt.savefig('WR top 10 highest average streamflow.pdf')# save the plot
+  
+    #plot for daily discharge and highest flow data with symbols in subplots
+    fig1 = plt.figure()
+    ax1 = fig1.add_subplot(111)
+    ax1.plot(daily_flow,c='b',label='Daily discharge',fillstyle='none')
+    ax1.plot(highest_flow,c='r',marker="*",label='Highest flow')#plotting highest flow with marker
+    plt.xlabel('Date', fontsize=10)# naming x-axis
+    plt.ylabel('Discharge-cubic ft/sec', fontsize=10)# naming y-axis
+    plt.title("Wabash river daily discharge and highest flow data", fontsize=12)# naming the title
+    #plot legend
+    plt.legend(loc='upper right')
+    #save the plot
+    plt.savefig('WR daily discharge and highest flow data.pdf')
+    
+    #plot for monthly average streamflow
+    monthly_flow = get_monthly_mean_flow(daily_flow)
+    monthly_flow.plot(figsize=(7,4),style='r--')# plotting figure size and display style
+    plt.xlabel("Date", fontsize=10)# naming x-axis
+    plt.ylabel("Discharge-cubic ft/sec", fontsize=10)# naming y-axis
+    plt.title("Wabash river discharge monthly average flow", fontsize=12)# naming the title
+    plt.savefig('WR monthly average streamflow.pdf')#save the plot
+    
+    #display plots
     plt.show()
+    #close the plots
     plt.close()
     
-    highest_flow = get_highest_flow(dataDF)
-    highest_flow.plot(figsize=(10,5),style='b--')
-    plt.title('Wabash river discharge top 10 highest daily average flow')
-    plt.xlabel('Date')
-    plt.ylabel('Discharge-cubic ft/sec')
-    plt.legend(['Highest flow'],loc = 'upper right')
-    plt.savefig('Wabash river discharge top 10 highest average streamflow.pdf')
-    plt.show()
-    plt.close()
-    
-    monthly_flow = get_monthly_mean_flow(dataDF)
-    monthly_flow.plot(figsize=(10,5),style='r+')
-    plt.title('Wabash river discharge monthly average flow')
-    plt.xlabel('Date')
-    plt.ylabel('Discharge-cubic ft/sec')
-    plt.legend(['Monthly avg flow'],loc = 'upper right')
-    plt.savefig('Wabash river discharge monthly average streamflow.pdf')
-    plt.show()
-    plt.close()
 # the following condition checks whether we are
 # running as a script, in which case run the test code,
 # or being imported, in which case don't.
@@ -79,17 +96,5 @@ if __name__ == '__main__':
     # read in data file
     dataDF = read_data( inFileName )
     
-    print('Daily average streamflow of Wabash river discharge \n')
-    outfileName = 'Wabash river discharge daily average flow.pdf'
-    get_daily_mean_flow(outfileName)
-    
-    print('The top 10 highest average streamflow of Wabash river discharge \n')
-    outfileName = 'Wabash river discharge top 10 highest average streamflow.pdf'
-    get_highest_flow(dataDF,outfileName)
-    
-    print('Monthly average streamflow of Wabash river discharge \n')
-    outfileName = 'Wabash river discharge monthly average streamflow.pdf'
-    get_monthly_mean_flow(outfileName)
-    
-    # create plots of time series data
+    # plots of time series data
     plot_streamflow( dataDF )
