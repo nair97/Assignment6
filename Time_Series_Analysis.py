@@ -48,6 +48,7 @@ def plot_streamflow( dataDF ):
     plt.xlabel('Date', fontsize=10)# naming x-axis
     plt.ylabel('Discharge-cubic ft/sec', fontsize=10)# naming y-axis
     plt.title("Wabash river discharge daily mean flow", fontsize=12)# naming the title
+    plt.tight_layout()
     plt.savefig('WR daily average streamflow.pdf')# save the plot
     
     #plot for top 10 highest avearge streamflow
@@ -56,6 +57,7 @@ def plot_streamflow( dataDF ):
     plt.xlabel('Date', fontsize=10)# naming x-axis
     plt.ylabel('Discharge-cubic ft/sec', fontsize=10)# naming y-axis
     plt.title("Wabash river discharge top 10 highest daily average flow", fontsize=12)# naming the title
+    plt.tight_layout()
     plt.savefig('WR top 10 highest average streamflow.pdf')# save the plot
   
     #plot for daily discharge and highest flow data with symbols in subplots
@@ -68,6 +70,7 @@ def plot_streamflow( dataDF ):
     plt.title("Wabash river daily discharge and highest flow data", fontsize=12)# naming the title
     #plot legend
     plt.legend(loc='upper right')
+    plt.tight_layout()
     #save the plot
     plt.savefig('WR daily discharge and highest flow data.pdf')
     
@@ -77,6 +80,7 @@ def plot_streamflow( dataDF ):
     plt.xlabel("Date", fontsize=10)# naming x-axis
     plt.ylabel("Discharge-cubic ft/sec", fontsize=10)# naming y-axis
     plt.title("Wabash river discharge monthly average flow", fontsize=12)# naming the title
+    plt.tight_layout()
     plt.savefig('WR monthly average streamflow.pdf')#save the plot
     
     #display plots
